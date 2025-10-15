@@ -4,7 +4,7 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <!-- ✅ Correct parent block -->
+  <!-- ✅ Spring Boot Parent -->
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
@@ -13,10 +13,10 @@
   </parent>
 
   <groupId>com.example</groupId>
-  <artifactId>news-backend</artifactId>
+  <artifactId>news</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <packaging>jar</packaging>
-  <name>news-backend</name>
+  <packaging>war</packaging> <!-- ✅ WAR for external Tomcat -->
+  <name>news</name>
 
   <properties>
     <java.version>17</java.version>
@@ -24,53 +24,59 @@
   </properties>
 
   <dependencies>
-    <!-- Spring Web -->
+
+    <!-- ✅ Spring Boot Web -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
+      <exclusions>
+        <!-- Exclude embedded Tomcat since you will deploy to external -->
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-tomcat</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
-    <!-- Spring Data JPA -->
+    <!-- ✅ Provided Tomcat for WAR deployment -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-tomcat</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- ✅ JPA & MySQL -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-jpa</artifactId>
     </dependency>
 
-    <!-- ✅ Correct MySQL dependency for Spring Boot 3 / JDK 17 -->
     <dependency>
       <groupId>com.mysql</groupId>
       <artifactId>mysql-connector-j</artifactId>
       <scope>runtime</scope>
     </dependency>
 
-    <!-- Validation -->
+    <!-- ✅ Validation -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-validation</artifactId>
     </dependency>
 
-    <!-- Date/Time JSON Support -->
+    <!-- ✅ Jackson (for Date/Time support) -->
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-jsr310</artifactId>
     </dependency>
 
-    <!-- Lombok -->
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <version>1.18.28</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- Swagger / OpenAPI -->
+    <!-- ✅ Swagger / OpenAPI -->
     <dependency>
       <groupId>org.springdoc</groupId>
       <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
       <version>${springdoc.version}</version>
     </dependency>
 
-    <!-- DevTools -->
+    <!-- ✅ DevTools (optional, for hot reload during development) -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-devtools</artifactId>
@@ -78,36 +84,38 @@
       <optional>true</optional>
     </dependency>
 
-    <!-- Testing -->
+    <!-- ✅ Test -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
+
   </dependencies>
 
   <build>
+    <finalName>news</finalName> <!-- ✅ Ensures WAR file is named news.war -->
     <plugins>
+
+      <!-- ✅ Java Compiler -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.11.0</version>
         <configuration>
           <release>${java.version}</release>
-          <annotationProcessorPaths>
-            <path>
-              <groupId>org.projectlombok</groupId>
-              <artifactId>lombok</artifactId>
-              <version>1.18.28</version>
-            </path>
-          </annotationProcessorPaths>
         </configuration>
       </plugin>
 
+      <!-- ✅ Spring Boot Plugin -->
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <mainClass>com.example.newsbackend.NewsBackendApplication</mainClass>
+        </configuration>
       </plugin>
+
     </plugins>
   </build>
 
